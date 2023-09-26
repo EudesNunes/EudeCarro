@@ -1,32 +1,30 @@
 package com.example.application.views.main;
 
-import com.vaadin.flow.component.Key;
+import com.example.application.views.main.cliente.ClienteListView;
+import com.example.application.views.main.componentes.NavBar;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.beans.factory.annotation.Autowired;
 
-@PageTitle("Main")
-@Route(value = "")
-public class MainView extends HorizontalLayout {
+@PageTitle("Lista de Clientes")
+public class MainView extends VerticalLayout {
+    private final ClienteListView clienteGrid;
 
-    private TextField name;
-    private Button sayHello;
-
-    public MainView() {
-        name = new TextField("Your name");
-        sayHello = new Button("Say hello");
-        sayHello.addClickListener(e -> {
-            Notification.show("Hello " + name.getValue());
-        });
-        sayHello.addClickShortcut(Key.ENTER);
-
-        setMargin(true);
-        setVerticalComponentAlignment(Alignment.END, name, sayHello);
-
-        add(name, sayHello);
+    @Autowired
+    public MainView(ClienteListView clienteGrid) {
+        NavBar navBar = new NavBar();
+        add(navBar);
+        this.clienteGrid = clienteGrid;
+        setSizeFull();
+        add(clienteGrid);
+        Button meuBotao = new Button("Novo Cliente");
+        meuBotao.addClickListener(event -> {   UI.getCurrent().navigate("newCliente");});
+        add(meuBotao);
     }
+
+   
 
 }
