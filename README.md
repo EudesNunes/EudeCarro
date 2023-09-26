@@ -13,8 +13,8 @@ História do Usuário:
 - Exclusão de locação: O usuário selecionará uma locação da listagem para excluir. 
 
 - Alteração de locação: O usuário irá poder alterar alguma locação, clicando em alterar na linha do registro será redirecionado a outra página para alterar os dados;
-- Alteração de Cliente: O usuário irá poder alterar algum cliente, clicando em alterar na linha do registro será redirecionado a outra página para alterar os dados;
-- Alteração de Veículo: O usuário poderá alterar o veículo ao clicar no botão de editar da tabela dos veículos, sendo redirecionado a outra página para alterar os dados. 
+- Alteração de cliente: O usuário irá poder alterar algum cliente, clicando em alterar na linha do registro será redirecionado a outra página para alterar os dados;
+- Alteração de veículo: O usuário poderá alterar o veículo ao clicar no botão de editar da tabela dos veículos, sendo redirecionado a outra página para alterar os dados. 
  
 - Consulta de veículos disponíveis: O usuário poderá consultar os veículos disponíveis para a locação;
 - Consulta de clientes: O usuário poderá consultar os clientes cadastrados no sistema;
