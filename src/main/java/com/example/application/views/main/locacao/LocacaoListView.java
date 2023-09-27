@@ -1,13 +1,10 @@
-package com.example.application.views.main.veiculo;
-
-
+package com.example.application.views.main.locacao;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.example.application.controller.ClienteController;
+import com.example.application.controller.LocacaoController;
 import com.example.application.controller.VeiculoController;
-import com.example.application.entity.Cliente;
-import com.example.application.entity.Veiculo;
-import com.example.application.enums.EnumStatus;
-import com.example.application.enums.EnumTipo;
+import com.example.application.entity.Locacao;
 import com.example.application.views.main.componentes.ConfirmationDialog;
 import com.example.application.views.main.componentes.NavBar;
 import com.vaadin.flow.component.UI;
@@ -20,53 +17,48 @@ import com.vaadin.flow.router.Route;
 import java.util.List;
 import java.util.Optional;
 
-@Route("veiculos/listar")
-public class VeiculoListView extends VerticalLayout {
-    private final VeiculoController veiculoController;
-    private Grid<Veiculo> grid;
+@Route("locacao/listar")
+public class LocacaoListView extends VerticalLayout {
+    private final LocacaoController locacaoController;
+    private Grid<Locacao> grid;
 
     @Autowired
-    public VeiculoListView(VeiculoController veiculoController) {
-        this.veiculoController = veiculoController;
+    public LocacaoListView(LocacaoController locacaoController,VeiculoController VeiculoController, ClienteController clienteController) {
+        this.locacaoController = locacaoController;
 
-        grid = new Grid<>(Veiculo.class);
+        grid = new Grid<>(Locacao.class);
         NavBar navBar = new NavBar();
         add(navBar);
 
+        List<Locacao> locacoens = (List<Locacao>) locacaoController.listar();
 
-        // Obtenha a lista de clientes do controller
-        List<Veiculo> veiculos = (List<Veiculo>) veiculoController.listar();
-
-        // Crie um DataProvider a partir da lista de clientes
-        ListDataProvider<Veiculo> dataProvider = DataProvider.ofCollection(veiculos);
+        ListDataProvider<Locacao> dataProvider = DataProvider.ofCollection(locacoens);
         grid.setDataProvider(dataProvider);
-        grid.setColumns("id","tipoVeiculo","marca","combustivel","km","status","modelo","renavan","placa");
-
-        grid.addComponentColumn(veiculo -> {
+        grid.setColumns("id","dataSaida","dataPrevDev","dataDev","valor","veiculoAlocado","cliente");
+        
+        grid.addComponentColumn(locacao -> {
             Button editarButton = new Button("Editar");
             editarButton.addClickListener(e -> {
-                Optional<Veiculo> veiculoOptional = Optional.of(veiculo);
-
-                CreateVeiculoView createVeiculoView = new CreateVeiculoView(veiculoController, veiculoOptional);
+                Optional<Locacao> locacaoOptional = Optional.of(locacao);
+                CreateLocacaoView createLocacaoView = new CreateLocacaoView(locacaoController, VeiculoController, clienteController, locacaoOptional);
                 
-                UI.getCurrent().add(createVeiculoView);
-
+                UI.getCurrent().add(createLocacaoView);
             });
             return editarButton;
         }).setHeader("Editar");
 
-        grid.addComponentColumn(veiculo -> {
+        grid.addComponentColumn(locacao -> {
             Button excluirButton = new Button("Excluir");
             excluirButton.addClickListener(e -> {
                 // Show a confirmation dialog
                 ConfirmationDialog confirmationDialog = new ConfirmationDialog("Confirmação",
-                        "Deseja excluir este veiculo?");
+                        "Deseja excluir essa Locação?");
                 confirmationDialog.open();
 
                 // Handle the user's choice
                 confirmationDialog.addConfirmationListener(event -> {
                     if (event.isConfirmed()) {
-                        veiculoController.deletar(veiculo);
+                        locacaoController.deletar(locacao);
                         // Refresh the data provider after deletion
                         grid.getDataProvider().refreshAll();
                     }
@@ -77,8 +69,8 @@ public class VeiculoListView extends VerticalLayout {
         }).setHeader("Excluir");
 
         add(grid);
-        Button novoClienteButton = new Button("Novo Veiculo");
-        novoClienteButton.addClickListener(e -> UI.getCurrent().navigate("newVeiculo"));
+        Button novoClienteButton = new Button("Nova Locação");
+        novoClienteButton.addClickListener(e -> UI.getCurrent().navigate("newLocacao"));
         add(novoClienteButton);
     }
 

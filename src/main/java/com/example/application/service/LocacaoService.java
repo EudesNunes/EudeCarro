@@ -11,4 +11,6 @@ public interface LocacaoService {
     List<Locacao> getAll();
 
     void save(Locacao locacao);
+    
+    void deletar(Locacao locacao);
 }

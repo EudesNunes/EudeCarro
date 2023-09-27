@@ -30,5 +30,6 @@ public class VeiculoServiceImpl implements VeiculoService {
     public void deletar(Veiculo veiculo) {
         veiculoDAO.remover(veiculo);
     }
+    
 
 }

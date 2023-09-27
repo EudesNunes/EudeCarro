@@ -24,7 +24,7 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
     @Autowired
     private VeiculoDAO veiculoDAO;
 
-     @Autowired
+    @Autowired
     private ClienteDAO clienteDAO;
 
     @Override
@@ -49,7 +49,6 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
                     }
                     locacao.setVeiculoAlocado(veiculo);
 
-                    
                     Optional<Cliente> clienteOptional = clienteDAO.obter(rs.getLong("cliente"));
                     Cliente cliente = null;
                     if (clienteOptional.isPresent()) {
@@ -87,7 +86,7 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
                     retorno.setDataDev(rs.getDate("dataDev"));
                     retorno.setDataSaida(rs.getDate("dataSaida"));
                     retorno.setDataPrevDev(rs.getDate("dataPrevDev"));
-                
+
                     Optional<Veiculo> veiculoOptional = veiculoDAO.obter(rs.getLong("veiculo"));
                     Veiculo veiculo = null;
                     if (veiculoOptional.isPresent()) {
@@ -116,7 +115,7 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
 
     @Override
     public boolean inserir(Locacao locacao) {
-        String sql = "INSERT INTO locacao(valor, dataPrevDev, dataSaida, veiculo, cliente) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO locacao(valor, dataPrevDev, dataSaida, veiculo, cliente,dataDev) VALUES(?,?,?,?,?,?)";
 
         try (Connection c = obterConexao()) {
             c.setAutoCommit(false);
@@ -126,6 +125,8 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
                 p.setDate(3, new java.sql.Date(locacao.getDataSaida().getTime()));
                 p.setLong(4, locacao.getVeiculoAlocado().getId());
                 p.setLong(5, locacao.getCliente().getId());
+                p.setDate(6, new java.sql.Date(locacao.getDataDev().getTime()));
+
                 p.executeUpdate();
                 c.commit();
                 return true;

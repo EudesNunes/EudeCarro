@@ -25,4 +25,10 @@ public class LocacaoServiceImpl implements LocacaoService {
        locacaoDAO.inserir(locacao);
     }
 
+   @Override
+   public void deletar(Locacao locacao) {
+      locacaoDAO.remover(locacao);
+
+   }
+
 }

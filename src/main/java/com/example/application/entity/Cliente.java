@@ -55,7 +55,10 @@ public class Cliente {
     public void setNumCnh(long numCnh) {
         this.numCnh = numCnh;
     }
-   
+    @Override
+    public String toString() {
+        return nome +" "+ cpf; 
+    }
    
     
 }

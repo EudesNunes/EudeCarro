@@ -10,7 +10,7 @@ public class NavBar extends HorizontalLayout {
         Anchor home = new Anchor("", "Home");
         Anchor cliente = new Anchor("clientes/listar", "Cliente");
         Anchor veiculo = new Anchor("veiculos/listar", "Veiculo"); 
-        Anchor locacao = new Anchor("locacao", "Locação");
+        Anchor locacao = new Anchor("locacao/listar", "Locação");
 
 
         add(home, cliente, veiculo,locacao);
