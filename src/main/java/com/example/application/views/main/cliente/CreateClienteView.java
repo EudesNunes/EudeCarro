@@ -14,20 +14,22 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.EmailField;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 
 @PageTitle("CreateCliente")
-@Route(value = "newCliente")
+@Route(value = "newCliente/:id")
 @Uses(Icon.class)
-public class CreateClienteView extends Composite<VerticalLayout> {
+public class CreateClienteView extends Composite<VerticalLayout> implements BeforeEnterObserver {
 
     private final ClienteController clienteController;
     private Cliente clienteToEdit;
+    private String clienteId;
 
     private TextField nomeField = new TextField();
     private TextField cpfField = new TextField();
@@ -35,17 +37,28 @@ public class CreateClienteView extends Composite<VerticalLayout> {
     private TextField cnhField = new TextField();
     private TextField telefoneField = new TextField();
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        clienteId = event.getRouteParameters().get("id").orElse(null);
+
+        if (clienteId != null) {
+            Long id = Long.parseLong(clienteId);
+            clienteToEdit = clienteController.obter(id).orElse(null);
+
+            if (clienteToEdit != null) {
+
+                nomeField.setValue(clienteToEdit.getNome());
+                cpfField.setValue(Long.toString(clienteToEdit.getCpf()));
+                emailField.setValue(clienteToEdit.getEmail());
+                telefoneField.setValue(clienteToEdit.getTelefone());
+                cnhField.setValue(Long.toString(clienteToEdit.getNumCnh()));
+            }
+        }
+    }
+
     public CreateClienteView(ClienteController clienteController, Optional<Cliente> clienteOptional) {
         this.clienteController = clienteController;
         clienteToEdit = clienteOptional.orElse(null);
-
-        if (clienteToEdit != null) {
-            nomeField.setValue(clienteToEdit.getNome());
-            cpfField.setValue(Long.toString(clienteToEdit.getCpf()));
-            emailField.setValue(clienteToEdit.getEmail());
-            telefoneField.setValue(clienteToEdit.getTelefone());
-            cnhField.setValue(Long.toString(clienteToEdit.getNumCnh()));
-        }
 
         HorizontalLayout layoutRow = new HorizontalLayout();
         VerticalLayout layoutColumn5 = new VerticalLayout();
@@ -113,17 +126,19 @@ public class CreateClienteView extends Composite<VerticalLayout> {
     }
 
     private void saveCliente() {
-        // Obtenha os valores dos campos
         String nome = nomeField.getValue();
         String cpf = cpfField.getValue().toString();
         String email = emailField.getValue();
         String cnh = cnhField.getValue().toString();
         String telefone = telefoneField.getValue();
 
-        // Crie uma instância de Cliente
         Cliente cliente = new Cliente(nome, telefone, Long.parseLong(cpf), email, Long.parseLong(cnh));
 
-        // Chame o método save do ClienteController
-        clienteController.save(cliente);
+        if (clienteToEdit == null) {
+            clienteController.save(cliente);
+        } else {
+            cliente.setId(clienteToEdit.getId());
+            clienteController.update(cliente);
+        }
     }
 }

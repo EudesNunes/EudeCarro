@@ -1,7 +1,5 @@
 package com.example.application.views.main.veiculo;
 
-import java.util.Optional;
-
 import com.example.application.controller.VeiculoController;
 import com.example.application.entity.Veiculo;
 import com.example.application.enums.EnumStatus;
@@ -20,16 +18,19 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.BeforeEnterEvent;
+import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 @PageTitle("CreateVeiculo")
-@Route(value = "newVeiculo")
+@Route(value = "newVeiculo/:id")
 @Uses(Icon.class)
-public class CreateVeiculoView extends Composite<VerticalLayout> {
+public class CreateVeiculoView extends Composite<VerticalLayout>  implements BeforeEnterObserver {
 
     private final VeiculoController veiculoController;
     private Veiculo veiculoToEdit;
+    private String veiculoId;
 
     private Select<EnumTipo> tipoVeiculoField = new Select<>();
     private Select<EnumStatus> statusField = new Select<>();
@@ -40,30 +41,39 @@ public class CreateVeiculoView extends Composite<VerticalLayout> {
     private TextField renavanField = new TextField();
     private TextField placaField = new TextField();
 
-    public CreateVeiculoView(VeiculoController veiculoController, Optional<Veiculo> veiculoOptional) {
-        this.veiculoController = veiculoController;
-        veiculoToEdit = veiculoOptional.orElse(null);
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        veiculoId = event.getRouteParameters().get("id").orElse(null);
+        
+        if (veiculoId != null ) {
+            Long id = Long.parseLong(veiculoId);
+            veiculoToEdit = veiculoController.obter(id).orElse(null);
+    
+            if(veiculoToEdit != null){
 
+                tipoVeiculoField.setValue(veiculoToEdit.getTipoVeiculo());
+                marcaField.setValue(veiculoToEdit.getMarca());
+                combustivelField.setValue(veiculoToEdit.getCombustivel());
+                kmField.setValue(Long.toString(veiculoToEdit.getKm()));
+                statusField.setValue(veiculoToEdit.getStatus());
+                modeloField.setValue(veiculoToEdit.getModelo());
+                renavanField.setValue(Long.toString(veiculoToEdit.getRenavan()));
+                placaField.setValue(veiculoToEdit.getPlaca());
+            }
+        }
+    }
+    public CreateVeiculoView(VeiculoController veiculoController) {
+        this.veiculoController = veiculoController;
+        
         // Configurar os Selects para os Enums
         tipoVeiculoField.setItems(EnumTipo.values());
-        tipoVeiculoField.setValue(EnumTipo.values()[0]); 
+        tipoVeiculoField.setValue(EnumTipo.values()[0]);
         statusField.setItems(EnumStatus.values());
         statusField.setValue(EnumStatus.values()[0]);
-        if (veiculoToEdit != null) {
-            tipoVeiculoField.setValue(veiculoToEdit.getTipoVeiculo());
-            marcaField.setValue(veiculoToEdit.getMarca());
-            combustivelField.setValue(veiculoToEdit.getCombustivel());
-            kmField.setValue(Long.toString(veiculoToEdit.getKm()));
-            statusField.setValue(veiculoToEdit.getStatus());
-            modeloField.setValue(veiculoToEdit.getModelo());
-            renavanField.setValue(Long.toString(veiculoToEdit.getRenavan()));
-            placaField.setValue(veiculoToEdit.getPlaca());
-        }
-
         FormLayout formLayout = new FormLayout();
         formLayout.setResponsiveSteps(
-                new FormLayout.ResponsiveStep("0", 2),  
-                new FormLayout.ResponsiveStep("20em", 4)); 
+                new FormLayout.ResponsiveStep("0", 2),
+                new FormLayout.ResponsiveStep("20em", 4));
 
         formLayout.addFormItem(tipoVeiculoField, "Tipo Veiculo");
         formLayout.addFormItem(marcaField, "Marca");
@@ -88,6 +98,8 @@ public class CreateVeiculoView extends Composite<VerticalLayout> {
         layoutColumn.setAlignItems(Alignment.CENTER);
 
         if (veiculoToEdit != null) {
+
+
             layoutColumn.setHorizontalComponentAlignment(Alignment.CENTER, h3);
             layoutColumn.setHorizontalComponentAlignment(Alignment.CENTER, formLayout);
         }
@@ -95,7 +107,7 @@ public class CreateVeiculoView extends Composite<VerticalLayout> {
         HorizontalLayout buttonLayout = new HorizontalLayout(buttonPrimary, buttonSecondary);
         buttonLayout.setJustifyContentMode(JustifyContentMode.CENTER);
 
-           buttonPrimary.addClickListener(event -> saveVeiculo());
+        buttonPrimary.addClickListener(event -> saveVeiculo());
         buttonSecondary.addClickListener(event -> UI.getCurrent().navigate("veiculos/listar"));
 
         content.add(layoutColumn, buttonLayout);
@@ -121,6 +133,11 @@ public class CreateVeiculoView extends Composite<VerticalLayout> {
         veiculo.setRenavan(Long.parseLong(renavan));
         veiculo.setPlaca(placa);
 
-        veiculoController.save(veiculo);
+        if (veiculoToEdit == null) {
+            veiculoController.save(veiculo);
+        } else {
+            veiculo.setId(veiculoToEdit.getId());
+            veiculoController.update(veiculo);
+        }
     }
 }

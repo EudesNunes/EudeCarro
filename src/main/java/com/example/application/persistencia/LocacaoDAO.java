@@ -3,9 +3,7 @@ package com.example.application.persistencia;
 import java.util.List;
 import java.util.Optional;
 
-
 import com.example.application.entity.Locacao;
-
 
 public interface LocacaoDAO {
     List<Locacao> listar();
@@ -17,4 +15,9 @@ public interface LocacaoDAO {
     boolean alterar(Locacao locacao);
 
     boolean remover(Locacao locacao);
+
+    boolean existeCliente(long id);
+
+    boolean existeVeiculo(long id);
+
 }

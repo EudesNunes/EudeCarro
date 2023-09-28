@@ -114,7 +114,7 @@ public class ClienteDAOimpl extends BaseDAO implements ClienteDAO {
                 p.setString(3, cliente.getNome());
                 p.setLong(4, cliente.getNumCnh());
                 p.setString(5, cliente.getTelefone());
-                p.setLong(9, cliente.getId());
+                p.setLong(6, cliente.getId());
                 p.executeUpdate();
                 c.commit();
                 return true;

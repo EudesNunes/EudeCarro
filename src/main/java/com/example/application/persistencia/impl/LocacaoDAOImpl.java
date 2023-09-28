@@ -144,7 +144,7 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
 
     @Override
     public boolean alterar(Locacao locacao) {
-        String sql = "UPDATE locacao SET valor=?, dataDev=?, dataSaida=?, dataPrevDev=? veiculo=? cliente=? WHERE id=?";
+        String sql = "UPDATE locacao SET valor=?, dataDev=?, dataSaida=?, dataPrevDev=?, veiculo=?, cliente=? WHERE id=?";
 
         try (Connection c = obterConexao()) {
             c.setAutoCommit(false);
@@ -196,6 +196,57 @@ public class LocacaoDAOImpl extends BaseDAO implements LocacaoDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public boolean existeCliente(long id) {
+        String sql = "SELECT COUNT(*) FROM locacao WHERE cliente = ?";
+
+        try (Connection c = obterConexao()) {
+            try (PreparedStatement p = c.prepareStatement(sql)) {
+                p.setLong(1, id);
+                ResultSet rs = p.executeQuery();
+
+                if (rs.next()) {
+                    int rowCount = rs.getInt(1);
+                    return rowCount > 0;
+                }
+            } catch (SQLException ex) {
+                System.out.println("Erro ao consultar Cliente com id " + id);
+                ex.printStackTrace();
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro na conexão.");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean existeVeiculo(long id) {
+        String sql = "SELECT COUNT(*) FROM locacao WHERE veiculo = ?";
+
+        try (Connection c = obterConexao()) {
+            try (PreparedStatement p = c.prepareStatement(sql)) {
+                p.setLong(1, id);
+                ResultSet rs = p.executeQuery();
+
+                if (rs.next()) {
+                    int rowCount = rs.getInt(1);
+                    return rowCount > 0;
+                }
+            } catch (SQLException ex) {
+                System.out.println("Erro ao consultar Cliente com id " + id);
+                ex.printStackTrace();
+            }
+        } catch (SQLException e) {
+            System.out.println("Erro na conexão.");
+            e.printStackTrace();
+        }
+
+        return false;
+    
     }
 
 }
