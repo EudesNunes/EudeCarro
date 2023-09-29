@@ -1,7 +1,6 @@
 package com.example.application.views.main.veiculo;
 
 import com.example.application.controller.VeiculoController;
-import com.example.application.entity.Locacao;
 import com.example.application.entity.Veiculo;
 import com.example.application.views.main.componentes.ConfirmationDialog;
 import com.example.application.views.main.componentes.NavBar;
@@ -63,7 +62,7 @@ public class VeiculoListView extends VerticalLayout {
         }).setHeader("Excluir");
 
         add(grid);
-        Button novoClienteButton = new Button("Novo Veiculo");
+        Button novoClienteButton = new Button("Novo Veículo");
         novoClienteButton.addClickListener(e -> UI.getCurrent().navigate("newVeiculo/0"));
         add(novoClienteButton);
     }
